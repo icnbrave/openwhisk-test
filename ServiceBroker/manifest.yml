@@ -3,6 +3,6 @@ applications:
   name: uxlservicebroker 
   command: node app.js
   path: .
-  domain: stage1.mybluemix.net
+  domain: mybluemix.net
   instances: 1
   memory: 128M
