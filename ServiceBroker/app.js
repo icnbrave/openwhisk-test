@@ -484,7 +484,8 @@ var catalog = function(request, response)
                         instructionsUrl  : baseMetadataUrl + "servicesample.md",
                         longDescription  : "UXL Service Broker Long Description",
                         mediumImageUrl   : baseMetadataUrl + "servicesample32.png",
-                        smallImageUrl    : baseMetadataUrl + "servicesample24.png"
+                        smallImageUrl    : baseMetadataUrl + "servicesample24.png",
+						embeddableDashboard: false
                     },
                     name             : "etservicebroker",
                     // TODO - Ensure this value is accurate for your service.  Requires PATCH of /v2/service_instances/:instance_id below
