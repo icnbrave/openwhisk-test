@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<script src="js/jquery-3.1.0.min.js"></script>
+	<script src="js/stupidtable.js?dev"></script>
+	<script src="js/index.js"></script>
+
+
+<style>
+body {
+	background: none repeat scroll 0 0;
+	font: 13px Arial, Helvetica, Verdana, Geneva, sans-serif;
+	margin: 0px;
+	padding: 0;
+}
+
+.container {
+	width: 300px;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	overflow: hidden;
+	display: inline-block;
+	margin: 0px 10px 5px 5px;
+	vertical-align: top;
+}
+
+.progressbar {
+	color: #fff;
+	text-align: right;
+	height: 25px;
+	width: 0;
+	background-color: #0ba1b5;
+	border-radius: 3px;
+}
+
+table, th, td {
+	border: 0px;
+	border-collapse: collapse;
+}
+
+p.big {
+	line-height: 200%;
+}
+
+#header {
+	background: #198cbf;
+	color: #FFFFFF;
+	position: fixed;
+	z-index: 99999;
+	clear: both;
+	height: 35px;
+	width: 100%;
+	left: 0;
+	font-size: 12pt;
+	padding: 5px 5px;
+}
+
+.wrap {
+	position: relative;
+	margin: 0 20px;
+	width: 1000px;
+}
+
+#content {
+	padding: 15px 0;
+	margin-buttom: 50px;
+	margin-top: 30px;
+	float: left;
+}
+
+#footer {
+	width: 100%;
+	float: left;
+	padding: 10px 0;
+	background: #198cbf;
+	text-align: left;
+	position: fixed;
+	bottom: 0;
+	z-index: 999999;
+}
+
+ul {
+	list-style-image: url("images/bullet.gif");
+	list-style-type: square;
+}
+</style>
+<style>
+.result_multiple table {
+	border-collapse: collapse;
+}
+
+.result_multiple th, .result_multiple td {
+	padding: 5px 20px;
+	border: 1px solid;
+	font-size: 12px;
+}
+
+.result_multiple th {
+	background-color: #80a2b7;
+	background-image: url(images/bg.gif);
+	background-repeat: no-repeat;
+	background-position: left 50%;
+}
+
+.result_multiple th[data-sort] {
+	cursor: pointer;
+}
+
+.result_multiple td.name {
+	font-weight: bold;
+}
+
+/* zebra-striping seems to really slow down Opera sometimes */
+.result_multiple tr:nth-child(even)>td {
+	background-color: #e0f8e0;
+}
+
+.result_multiple tr:nth-child(odd)>td {
+	background-color: #ffffff;
+}
+</style>
+</head>
+
+<body>
+	<div id="header">
+		<img src="images/tools.png"
+			style="width: 30px; height: 30px; vertical-align: middle"> <span
+			style="padding: 0 5px"> <b>G11n Tools</b></span>
+	</div>
+	<div class="wrap">
+		<div id="content">
+			<h1>Web Page Corruption Detection Tool</h1>
+			<div>
+				<label> <input type="radio" name="urlRadio" id="singleR"
+					value="single"><b>Single URL</b></label> <label> <input
+					type="radio" name="urlRadio" id="multipleR" value="multiple"><b>Multiple
+						URLs</b></label>
+			</div>
+			<div id="single">
+				<form id="target">
+					<p class="big">
+						<b>Page URL:</b><span style="padding: 0 10px"><input
+							type="text" id="url" name="url" size="50" /></span><br> <b>Page
+							character Encoding (Optional):</b><span style="padding: 0 10px"><input
+							type="text" id="page_charset" name="page_charset" size="30"
+							value="" /></span> <br> (e.g. UTF-8, Big5. Note: This value will
+						overwrite charset attribute in html page)<br>
+						<button id="ckEcodingBt">Check Corruption</button>
+						<br>
+					<table id="statusTbl" width="500">
+						<tr>
+							<td align="left"><b>Scan Result: <span id="result"
+									style="padding: 0 5px"></span></b></td>
+						</tr>
+						<tr>
+							<td align="left"><b>Page Encoding: <span id="encoding"
+									style="padding: 0 5px"></span></b></td>
+						</tr>
+						<tr>
+							<td align="left"><span id="corruption"><b>Corruption
+										messages: <span id="corruptmsg" style="padding: 0 5px"></span>
+								</b></span></td>
+						</tr>
+					</table>
+					</p>
+				</form>
+			</div>
+			<div id="multiple">
+				<form id="target2">
+					<p>
+						<input type="file" id="fileinput" />
+					</p>
+				</form>
+				<p>
+					<img src="images/bullet.gif"> Input file format examples:
+				<div style="background-color: rgba(0, 0, 0, 0.5); color: rgba(255, 255, 255, 255);">
+						URL1,encoding1<br /> URL2<br /> URL3,encoding3<br />
+				</div>
+				</p>
+
+				<table class="result_multiple" id="result_multiple">
+					<thead>
+						<tr>
+							<th data-sort="string">URL</th>
+							<th data-sort="string">Scan Result</th>
+							<th data-sort="string">Page Encoding</th>
+							<th data-sort="string">Corruption messages</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!--
+						<tr>
+							<td>http://emergtech.mybluemix.net/test/garbledBig5.html</td>
+							<td>Invalid characters found</td>
+							<td>Big5</td>
+							<td>???</td>
+						</tr>
+						<tr>
+							<td>http://semergtech.mybluemix.net/test/garbledBig5.html</td>
+							<td>Invasslid characters found</td>
+							<td>Bigss5</td>
+							<td>???ss</td>
+						</tr>
+						  -->
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<div id="footer">
+		<div class="wrap">
+			<div class="logo">
+				<img src="images/IBM-Logo.png" height="20" width="60">
+			</div>
+		</div>
+	</div>
+</body>
+</html>

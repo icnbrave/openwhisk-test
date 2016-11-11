@@ -1,0 +1,15 @@
+{
+	"name": "testservicenode3",
+	"version": "0.0.1",
+	"description": "A sample nodejs app for Bluemix",
+	"dependencies": {
+		"express": "3.4.8",
+		"jade": "1.1.4",
+		"util":"0.10.3",
+		"node-uuid": "*"
+	},
+	"engines": {
+		"node": "0.10.*"
+	},
+	"repository": {}
+}
