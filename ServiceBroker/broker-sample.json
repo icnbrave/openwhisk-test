@@ -1,6 +1,6 @@
 {
 	"name": "uxlservicebroker",
-	"broker_url": "http://uxlservicebroker.stage1.mybluemix.net",
+	"broker_url": "http://uxlservicebroker.mybluemix.net",
 	"auth_username": "TestServiceBrokerUser",
 	"auth_password": "TestServiceBrokerPassword",
 	"owningOrganization": "zhiyongf@cn.ibm.com",
