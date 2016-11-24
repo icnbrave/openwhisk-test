@@ -1,0 +1,1 @@
+Check [Story 4780](https://hub.jazz.net/ccm26/quickplanner/jazzhub.html#items:projectId=_5sSt9T6UEeaLGoqw6WzEdw&serverId=hub.jazz.net&planType=allwork&allIterations=true&itemId=4780) for detailed RESTful API usage and dev environment setup steps.

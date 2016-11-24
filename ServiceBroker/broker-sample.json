@@ -1,0 +1,11 @@
+{
+	"name": "uxlservicebroker",
+	"broker_url": "http://uxlservicebroker.mybluemix.net",
+	"auth_username": "TestServiceBrokerUser",
+	"auth_password": "TestServiceBrokerPassword",
+	"owningOrganization": "zhiyongf@cn.ibm.com",
+	"serviceKeysSupported": false,
+	"visibilities": [
+		{"organization_name": "zhiyongf@cn.ibm.com"}
+	]
+}
