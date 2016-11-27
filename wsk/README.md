@@ -1,4 +1,8 @@
 ## OpenWhisk implementation
+> This paper is aiming to list all steps to implement the openwhisk based solution that using openwhisk github service to detect changes happening in [garbage-test-app](https://github.com/icnbrave/garbage-test-app), and send changed or added files to cunstomized garbage detection service, and finnally send the detect result to slack. 
+
+Here attached the workflow:
+![Workflow](./img/workflow.png)
 
 ### Create git repository for sample application
 Refer to [garbage-test-app](https://github.com/icnbrave/garbage-test-app)
@@ -25,27 +29,22 @@ $ cf push garbage-test-app -b https://github.com/cloudfoundry/staticfile-buildpa
   $ wsk trigger create gitTrigger --feed myGit/webhook -p events push
   ```
   after the trigger has been created successfully, the trigger url will be added to webhooks of icnbrave/garbage-test-app in github. 
+  ![webhook in icnbrave/garbage-test-app](./img/webhook.png)
   
 ### OpenWhisk - Create an action to recieve payload from github push event
 
-  1.  Create recPayloadFromGit.js as below
+  1.  Create [getPushPayload.js](./getPushPayload.js) as below
 
-  ```
-    function main(params){
-        return {payload: params};
-     }
-  ```
+  2.  Create getPushPayloadAction with getPushPayload.js
 
-  2.  Create recPayloadFromGitAction with recPayloadFromGit.js
+  `$ wsk action create getPushPayloadAction getPushPayload.js`
 
-  `$ wsk action create recPayloadFromGitAction recPayloadFromGit.js`
+  3.  Create rule git2slackRule to associate gitTrigger with getPushPayloadAction
 
-  3.  Create rule RecPayloadRule to associate gitTrigger with recPayloadFromGitAction
+  `$ wsk rule create git2slackRule gitTrigger getPushPayloadAction`
 
-  `$ wsk rule create RecPayloadRule gitTrigger recPayloadFromGitAction`
-
-  4.  Then any new push event to garbage-test-app repository, trigger gitTrigger will be fired and action recPayloadFromGitAction will be triggerred.
-  Event payload information can be refered in (Github events and payload)[https://developer.github.com/v3/activity/events/types/]
+  4.  Then any new push event to garbage-test-app repository, trigger gitTrigger will be fired and action getPushPayloadAction will be triggerred.
+  Event payload information can be refered in [Github events and payload](https://developer.github.com/v3/activity/events/types/)
   
 ### Garbage detection API
 
@@ -69,9 +68,9 @@ Data: jsonArrayString, for example:
 ```
 url is required, and encoding is optional.
 
-So create action garbageDetectionAction with garbageDetection.js
+So create action garbageDetectionAction with [garbageDetectionAction.js](./garbageDetectionAction.js)
 
-`$ wsk action create garbageDetectionAction garbageDetection.js`
+`$ wsk action create garbageDetectionAction garbageDetectionAction.js`
 
 Test garbageDetectionAction action
 
@@ -104,20 +103,21 @@ Test garbageDetectionAction action
 1. Configure Slack (incoming webhook)[https://api.slack.com/incoming-webhooks] for your team. After Slack is configured, you get a webhook URL that looks like `https://hooks.slack.com/services/aaaaaaaaa/bbbbbbbbb/cccccccccccccccccccccccc` 
 2. Create customized package with your Slack credentials
 `$ wsk package create myCustomSlack --param url "https://hooks.slack.com/services/..." --param username Bob --param channel "#MySlackChannel"`
-3. Customize slack post action with slackPost.js file
+3. Customize slack post action with [slackPost.js](./slackPost.js) file
 `$ wsk action create myCustomSlack/post2slack slackPost.js`
 4. Create a action sequence git2slack to chain actions garbageDetectionAction and post2slack
 `$ wsk action create git2slack --sequence garbageDetectionAction,myCustomSlack/post2slack`
 5. Test sequence git2slack
 `$  wsk action invoke git2slack --blocking --result -p payload http://garbagecodedetection.mybluemix.net/test/garbledUTF8-2.html,http://garbagecodedetection.mybluemix.net/test/garbledBig5.html`
 
-Then the garbage detect result will be sent to slack
+Then the garbage detect result will be sent to slack, see below screen shot.
+![Detect Result](./img/slack-corruption.png)
 
 ### Read changes from github payload and send to git2slack action
 
 All above test data is static, how to get changed or added files from a specified repository?
 
-Create action getPushPayloadAction with below file getPushPayload.js
+Create action getPushPayloadAction with below file [getPushPayload.js](./getPushPayload.js)
 `$ wsk action create getPushPayloadAction getPushPayload.js`
 
 Add getPushPayloadAction to git2slack sequence.
@@ -152,19 +152,7 @@ wsk rule enable git2slackRule
 ```
 
 When you modify garbledUTF8-2.html, and push to repository, garbage detection result will be sent to slack as below:
-
-```
-[
-    {
-        "url": "https://garbagetestapp.mybluemix.net/garbledUTF8-2.html",
-        "garbagechar_found": true,
-        "doc_charset": "UTF-8",
-        "garbled_lines": [
-            "????? ????123"
-        ]
-    }
-]
-```
+![Corrupted](./img/slack-corruption-2.png)
 
 As you see, the unicode characters are corrupted. The reason of corruption is that the unicode char is not supported by current openwhisk version, refer to http://stackoverflow.com/questions/36812389/openwhisk-character-sets. However, we can encode all unicode char during transferring data between actions, refer to https://github.com/openwhisk/openwhisk/issues/252 for workaround.
 
