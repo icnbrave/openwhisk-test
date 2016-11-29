@@ -74,7 +74,9 @@ So create action garbageDetectionAction with [garbageDetectionAction.js](./garba
 
 Test garbageDetectionAction action
 
-`$ wsk action invoke garbageDetectAction --blocking --result -p payload http://garbagecodedetection.mybluemix.net/test/garbledUTF8-2.html,http://garbagecodedetection.mybluemix.net/test/garbledBig5.html`
+```
+$ wsk action invoke garbageDetectAction --blocking --result -p payload http://garbagecodedetection.mybluemix.net/test/garbledUTF8-2.html,http://garbagecodedetection.mybluemix.net/test/garbledBig5.html
+```
 
 ```
 {
@@ -102,13 +104,21 @@ Test garbageDetectionAction action
 ### OpenWhisk - Send garbage detect result to slack
 1. Configure Slack (incoming webhook)[https://api.slack.com/incoming-webhooks] for your team. After Slack is configured, you get a webhook URL that looks like `https://hooks.slack.com/services/aaaaaaaaa/bbbbbbbbb/cccccccccccccccccccccccc` 
 2. Create customized package with your Slack credentials
-`$ wsk package create myCustomSlack --param url "https://hooks.slack.com/services/..." --param username Bob --param channel "#MySlackChannel"`
+```
+$ wsk package create myCustomSlack --param url "https://hooks.slack.com/services/..." --param username Bob --param channel "#MySlackChannel"
+```
 3. Customize slack post action with [slackPost.js](./slackPost.js) file
-`$ wsk action create myCustomSlack/post2slack slackPost.js`
+```
+$ wsk action create myCustomSlack/post2slack slackPost.js
+```
 4. Create a action sequence git2slack to chain actions garbageDetectionAction and post2slack
-`$ wsk action create git2slack --sequence garbageDetectionAction,myCustomSlack/post2slack`
+```
+$ wsk action create git2slack --sequence garbageDetectionAction,myCustomSlack/post2slack
+```
 5. Test sequence git2slack
-`$  wsk action invoke git2slack --blocking --result -p payload http://garbagecodedetection.mybluemix.net/test/garbledUTF8-2.html,http://garbagecodedetection.mybluemix.net/test/garbledBig5.html`
+```
+$  wsk action invoke git2slack --blocking --result -p payload http://garbagecodedetection.mybluemix.net/test/garbledUTF8-2.html,http://garbagecodedetection.mybluemix.net/test/garbledBig5.html
+```
 
 Then the garbage detect result will be sent to slack, see below screen shot.
 ![Detect Result](./img/slack-corruption.png)
@@ -118,10 +128,14 @@ Then the garbage detect result will be sent to slack, see below screen shot.
 All above test data is static, how to get changed or added files from a specified repository?
 
 Create action getPushPayloadAction with below file [getPushPayload.js](./getPushPayload.js)
-`$ wsk action create getPushPayloadAction getPushPayload.js`
+```
+$ wsk action create getPushPayloadAction getPushPayload.js
+```
 
 Add getPushPayloadAction to git2slack sequence.
-`$ wsk action update git2slack getPushPayloadAction,`
+```
+$ wsk action update git2slack getPushPayloadAction,
+```
 
 Update git2slackRule rule
 ```
@@ -141,7 +155,9 @@ Modify garbledUTF8-2.html, and add garbledUTF8-3.html in test sample application
 
 Update git2slack to chain getPushPayloadAction, garbageDetectionAction, and mySlack/post2slack
 
-`$ wsk action update git2slack --sequence getPushPayloadAction,garbageDetectAction,myCustomSlack/post2slack`
+```
+$ wsk action update git2slack --sequence getPushPayloadAction,garbageDetectAction,myCustomSlack/post2slack
+```
 
 Update git2slackRule 
 
