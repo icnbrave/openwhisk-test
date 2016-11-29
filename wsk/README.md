@@ -103,27 +103,27 @@ $ wsk action invoke garbageDetectAction --blocking --result -p payload http://ga
 
 ### OpenWhisk - Send garbage detect result to slack
 
-1. Configure Slack (incoming webhook)[https://api.slack.com/incoming-webhooks] for your team. After Slack is configured, you get a webhook URL that looks like `https://hooks.slack.com/services/aaaaaaaaa/bbbbbbbbb/cccccccccccccccccccccccc` 
+- Configure Slack (incoming webhook)[https://api.slack.com/incoming-webhooks] for your team. After Slack is configured, you get a webhook URL that looks like `https://hooks.slack.com/services/aaaaaaaaa/bbbbbbbbb/cccccccccccccccccccccccc` 
 
-2. Create customized package with your Slack credentials
+- Create customized package with your Slack credentials
 
 ```
 $ wsk package create myCustomSlack --param url "https://hooks.slack.com/services/..." --param username Bob --param channel "#MySlackChannel"
 ```
 
-3. Customize slack post action with [slackPost.js](./slackPost.js) file
+- Customize slack post action with [slackPost.js](./slackPost.js) file
 
 ```
 $ wsk action create myCustomSlack/post2slack slackPost.js
 ```
 
-4. Create a action sequence git2slack to chain actions garbageDetectionAction and post2slack
+- Create a action sequence git2slack to chain actions garbageDetectionAction and post2slack
 
 ```
 $ wsk action create git2slack --sequence garbageDetectionAction,myCustomSlack/post2slack
 ```
 
-5. Test sequence git2slack
+- Test sequence git2slack
 
 ```
 $  wsk action invoke git2slack --blocking --result -p payload http://garbagecodedetection.mybluemix.net/test/garbledUTF8-2.html,http://garbagecodedetection.mybluemix.net/test/garbledBig5.html
