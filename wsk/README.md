@@ -103,7 +103,7 @@ $ wsk action invoke garbageDetectAction --blocking --result -p payload http://ga
 
 ### OpenWhisk - Send garbage detect result to slack
 
-- Configure Slack (incoming webhook)[https://api.slack.com/incoming-webhooks] for your team. After Slack is configured, you get a webhook URL that looks like `https://hooks.slack.com/services/aaaaaaaaa/bbbbbbbbb/cccccccccccccccccccccccc` 
+- Configure Slack [incoming webhook](https://api.slack.com/incoming-webhooks) for your team. After Slack is configured, you get a webhook URL that looks like `https://hooks.slack.com/services/aaaaaaaaa/bbbbbbbbb/cccccccccccccccccccccccc` 
 
 - Create customized package with your Slack credentials
 
